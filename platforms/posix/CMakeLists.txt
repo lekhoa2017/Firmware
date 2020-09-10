@@ -97,6 +97,11 @@ px4_posix_generate_symlinks(
 	TARGET px4
 )
 
+if (config_romfs_root)
+	add_subdirectory(${PX4_SOURCE_DIR}/ROMFS ${PX4_BINARY_DIR}/ROMFS)
+	add_dependencies(px4 romfs_gen_files_target)
+endif()
+
 
 # board defined upload helper
 if(EXISTS "${PX4_BOARD_DIR}/cmake/upload.cmake")
