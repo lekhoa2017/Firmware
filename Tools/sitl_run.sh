@@ -42,7 +42,7 @@ else
 	no_pxh=""
 fi
 
-if [ "$model" != none ]; then
+if [ "$program" == "jmavsim" ]; then
 	jmavsim_pid=`ps aux | grep java | grep "\-jar jmavsim_run.jar" | awk '{ print $2 }'`
 	if [ -n "$jmavsim_pid" ]; then
 		kill $jmavsim_pid
@@ -77,7 +77,7 @@ SIM_PID=0
 if [ "$program" == "jmavsim" ] && [ ! -n "$no_sim" ]; then
 	# Start Java simulator
 	"$src_path"/Tools/jmavsim_run.sh -r 250 -l &
-	SIM_PID=`echo $!`
+	SIM_PID=$!
 elif [ "$program" == "gazebo" ] && [ ! -n "$no_sim" ]; then
 	if [ -x "$(command -v gazebo)" ]; then
 		# Get the model name
@@ -126,7 +126,7 @@ elif [ "$program" == "gazebo" ] && [ ! -n "$no_sim" ]; then
 			# is putting it into the background we need to avoid it by backing off
 			sleep 3
 			nice -n 20 gzclient --verbose &
-			GUI_PID=`echo $!`
+			GUI_PID=$!
 		fi
 	else
 		echo "You need to have gazebo simulator installed!"
@@ -137,7 +137,7 @@ elif [ "$program" == "flightgear" ] && [ -z "$no_sim" ]; then
 	cd "${src_path}/Tools/flightgear_bridge/"
 	"${src_path}/Tools/flightgear_bridge/FG_run.py" "models/"${model}".json" 0
 	"${build_path}/build_flightgear_bridge/flightgear_bridge" 0 `./get_FGbridge_params.py "models/"${model}".json"` &
-	FG_BRIDGE_PID=`echo $!`
+	FG_BRIDGE_PID=$!
 fi
 
 pushd "$rootfs" >/dev/null
