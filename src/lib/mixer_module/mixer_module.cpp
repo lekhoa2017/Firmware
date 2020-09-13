@@ -322,6 +322,22 @@ bool MixingOutput::update()
 		return false;
 	}
 
+	if (_vehicle_land_detected_sub.updated()) {
+		vehicle_land_detected_s vehicle_land_detected;
+
+		if (_vehicle_land_detected_sub.copy(&vehicle_land_detected)) {
+			// disable airmode when landed to settle on uneven ground
+			if (_param_mc_airmode.get() > 0) {
+				if (vehicle_land_detected.landed) {
+					_mixers->set_airmode(Mixer::Airmode::disabled);
+
+				} else {
+					_mixers->set_airmode((Mixer::Airmode)_param_mc_airmode.get());
+				}
+			}
+		}
+	}
+
 	// check arming state
 	if (_armed_sub.update(&_armed)) {
 		_armed.in_esc_calibration_mode &= _support_esc_calibration;
